@@ -1,50 +1,53 @@
-'use client'
-import { NextUIProvider, useDisclosure } from '@nextui-org/react';
-import { useState, useRef, useEffect } from 'react';
+'use client';
+
+import {
+  NextUIProvider,
+  Modal,
+  ModalContent,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+  Button,
+  useDisclosure,
+  user,
+} from '@nextui-org/react';
+import React, { useState, useRef, useEffect } from 'react';
+import { FaEye } from 'react-icons/fa';
+import { FaPen } from 'react-icons/fa';
+import { FaTrash } from 'react-icons/fa';
 import axios from 'axios';
-import Logoutmodal from '@/components/logout/logoutmodal';
 import Approve from '@/components/approvalmodal/approve';
 import Success from '@/components/successmodal/success';
-import { FaCheckCircle, FaClock, FaTimesCircle, FaEye, FaPen, FaTrash } from 'react-icons/fa';
 
-interface BankDetails {
-  user_id: string;
-  holder_name: string;
-  is_bank_kyc_verified: boolean;
-  username: string;
-  issuedAt: string;
-  waitingTime: string;
-  account_number: string;
-  ifsc_code: string;
-  bank_name: string;
-}
-
-interface KYCRecord {
-  id: string;
-}
-
-interface User {
-  id: string;
-  bankDetails: BankDetails[];
-  kycRecords: KYCRecord[];
-}
-
-export default function KYC(props: { title: string }) {
-  const { title } = props;
+const KYC = () => {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
-  const [csv, setCsv] = useState<File | null>(null);
-  const [selectedUser, setSelectedUser] = useState<User | null>(null);
-  const [data, setData] = useState<User[]>([]);
+  const [csv, setCsv] = useState(null);
+  const [selectedUser, setSelectedUser] = useState(null);
+  const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
-  const uploadCSVRef = useRef<HTMLInputElement>(null);
 
-  const handleFilterChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const uploadCSVRef = useRef(null);
+  const onOpenModal = (user) => {
+    setSelectedUser(user);
+    onOpenChange(true);
+  };
+
+  const imageUrl = user ? user.imageUrl : 'default-image-url';
+
+  const [filteredData, setFilteredData] = useState(data);
+  const [sortOrder, setSortOrder] = useState('asc');
+
+  const handleFilterChange = (e) => {
     const filterValue = e.target.value.toLowerCase();
-    const filteredUsers = data.filter((user) => user.bankDetails[0].holder_name.toLowerCase().includes(filterValue));
+    const filteredUsers = data.filter((user) => user.name.toLowerCase().includes(filterValue));
     setFilteredData(filteredUsers);
   };
 
-  const handleSort = (column: keyof BankDetails) => {
+  const handleViewUser = (user) => {
+    setSelectedUser(user);
+  };
+
+  const handleSort = (column) => {
     const sortedData = [...filteredData].sort((a, b) => {
       if (a[column] < b[column]) return sortOrder === 'asc' ? -1 : 1;
       if (a[column] > b[column]) return sortOrder === 'asc' ? 1 : -1;
@@ -54,16 +57,62 @@ export default function KYC(props: { title: string }) {
     setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
   };
 
-  const allBankKyc = () => {
+  const [isApproveModalOpen, setApproveModalOpen] = useState(false);
+  const [isSuccessModalOpen, setSuccessModalOpen] = useState(false);
+
+  const handleOpenApproveModal = () => setApproveModalOpen(true);
+  const handleCloseApproveModal = () => setApproveModalOpen(false);
+
+  const handleOpenSuccessModal = () => setSuccessModalOpen(true);
+  const handleCloseSuccessModal = () => setSuccessModalOpen(false);
+
+  const [selectedImage, setSelectedImage] = useState(null);
+  const [isFullScreen, setIsFullScreen] = useState(false);
+
+  const handleCloseImage = () => {
+    setIsFullScreen(false);
+    setSelectedImage(null);
+  };
+
+  function updateUserVerification(id, status) {
+    const config = {
+      method: 'put',
+      url: `http://150.129.118.10:8080/user/kyc/${id}/review`,
+      data: {
+        status,
+      },
+    };
+
+    axios(config)
+      .then(function (response) {
+        console.log(JSON.stringify(response.data));
+        alert('user kyc updated');
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+  }
+
+  function allBankKyc() {
     setLoading(true);
-    axios.get<User[]>('http://150.129.118.10:8080/user/bankkyc/all')
-      .then(response => {
+    const config = {
+      method: 'get',
+      url: 'http://150.129.118.10:8080/user/bankkyc/all',
+    };
+
+    axios(config)
+      .then(function (response) {
+        console.log(JSON.stringify(response.data));
         setData(response.data);
         setFilteredData(response.data);
       })
-      .catch(console.error)
-      .finally(() => setLoading(false));
-  };
+      .catch(function (error) {
+        console.log(error);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  }
 
   useEffect(() => {
     allBankKyc();
@@ -342,4 +391,6 @@ export default function KYC(props: { title: string }) {
       </div>
     </NextUIProvider>
   );
-}
+};
+
+export default KYC;
