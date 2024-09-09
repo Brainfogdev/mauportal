@@ -80,6 +80,25 @@ export default function KYC(props: { title: string }) {
     setSelectedImage(null);
   };
 
+  function updateUserVerification(id, status) {
+    const config = {
+      method: 'put',
+      url: `http://150.129.118.10:8080/user/kyc/${id}/review`,
+      data: {
+        status,
+      },
+    };
+
+    axios(config)
+      .then(function (response) {
+        console.log(JSON.stringify(response.data));
+        alert('user kyc updated');
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+  }
+
   function allBankKyc() {
     setLoading(true);
     const config = {
@@ -113,7 +132,7 @@ export default function KYC(props: { title: string }) {
             <p className="text-2xl font-bold">Bank KYC </p>
             <button
               type="button"
-              onClick={allBankKyc}
+              onClick={() => window.location.reload()}
               className="text-white bg-[#1da1f2] hover:bg-[#1da1f2]/90 focus:ring-4 focus:outline-none focus:ring-[#1da1f2]/50 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:focus:ring-[#1da1f2]/55 me-2 mb-2"
             >
               Refresh
@@ -128,7 +147,7 @@ export default function KYC(props: { title: string }) {
                   <th
                     scope="col"
                     className=" cursor-pointer px-6 py-3 bg-gray-800 text-white text-center cursor-pointerback whitespace-nowrap"
-                    onClick={() => handleSort('referenceId')}
+                    onClick={() => handleSort('user_id')}
                   >
                     Reference Id
                     <span className="ml-2">{sortOrder === 'asc' ? '↑' : '↓'}</span>
@@ -136,7 +155,7 @@ export default function KYC(props: { title: string }) {
                   <th
                     scope="col"
                     className="px-6 py-3 bg-gray-800 text-white w-36 text-center cursor-pointer whitespace-nowrap"
-                    onClick={() => handleSort('kycId')}
+                    onClick={() => handleSort('user_id')}
                   >
                     KYC Id
                     <span className="ml-2">{sortOrder === 'asc' ? '↑' : '↓'}</span>
@@ -145,7 +164,7 @@ export default function KYC(props: { title: string }) {
                   <th
                     scope="col"
                     className="px-6 py-3 bg-gray-800 text-white text-center cursor-pointer  whitespace-nowrap"
-                    onClick={() => handleSort('username')}
+                    onClick={() => handleSort('holder_name')}
                   >
                     Username
                     <span className="ml-2 cursor-pointer">{sortOrder === 'asc' ? '↑' : '↓'}</span>
@@ -168,58 +187,55 @@ export default function KYC(props: { title: string }) {
                 </tr>
               </thead>
               <tbody>
-                {filteredData.map((user) => (
-                  <tr
-                    key={user.id}
-                    className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
-                  >
-                    <th
-                      scope="row"
-                      className="bg-gray-800 flex items-center px-6 py-4 text-gray-900 whitespace-nowrap dark:text-white"
+                {filteredData.map((user) => {
+                  if (user && user.kycRecords && user.kycRecords.length === 0) {
+                    return null;
+                  }
+                  return (
+                    <tr
+                      key={user.id}
+                      className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
                     >
-                      <td className="px-4 py-8 bg-gray-800 text-white text-xs">{user.bankDetails.[0].user_id}</td>
-                    </th>
-                    <td className="px-6 py-4 bg-gray-800 text-center text-xs">{user.kycId}</td>
+                      <th
+                        scope="row"
+                        className="bg-gray-800 flex items-center px-6 py-4 text-gray-900 whitespace-nowrap dark:text-white"
+                      >
+                        <td className="px-4 py-8 bg-gray-800 text-white text-xs">
+                          {user.bankDetails[0].user_id}
+                        </td>
+                      </th>
+                      <td className="px-6 py-4 bg-gray-800 text-center text-xs">
+                        {user.bankDetails[0].user_id}
+                      </td>
 
-                    <td className="px-6 py-4 bg-gray-800 text-center text-xs">{user.bankDetails.[0].username}</td>
-                    <td
-                      className={`px-6 py-4 bg-gray-800 text-center text-xs ${
-                        user.id === 2 || user.id === 6
-                          ? 'text-yellow-500'
-                          : user.id === 1 ||
-                              user.id === 3 ||
-                              user.id === 5 ||
-                              user.id === 7 ||
-                              user.id === 9
+                      <td className="px-6 py-4 bg-gray-800 text-center text-xs">
+                        {user.bankDetails[0].holder_name}
+                      </td>
+                      <td
+                        className={`px-6 py-4 bg-gray-800 text-center text-xs ${
+                          user.bankDetails[0].is_bank_kyc_verified
                             ? 'text-green-500'
-                            : 'text-red-500'
-                      }`}
-                    >
-                      {user.id === 2 || user.id === 6
-                        ? 'Pending'
-                        : user.id === 1 ||
-                            user.id === 3 ||
-                            user.id === 5 ||
-                            user.id === 7 ||
-                            user.id === 9
-                          ? 'Completed'
-                          : 'Failed'}
-                    </td>
+                            : 'text-yellow-500'
+                        }`}
+                      >
+                        {user.bankDetails[0].is_bank_kyc_verified ? 'Completed' : 'Pending'}
+                      </td>
 
-                    <td className="px-6 py-4 bg-gray-800">
-                      <div className=" flex gap-4 border border-slate-500 text-white px-4 py-2 rounded hover:bg-blue-500 hover:text-white transition duration-300">
-                        <FaEye
-                          onClick={() => handleViewUser(user)}
-                          size={15}
-                          className="text-white transition cursor-pointer duration-300"
-                        />
+                      <td className="px-6 py-4 bg-gray-800">
+                        <div className=" flex gap-4 border border-slate-500 text-white px-4 py-2 rounded hover:bg-blue-500 hover:text-white transition duration-300">
+                          <FaEye
+                            onClick={() => handleViewUser(user)}
+                            size={15}
+                            className="text-white transition cursor-pointer duration-300"
+                          />
 
-                        <FaPen size={15} className="text-white transition duration-300" />
-                        <FaTrash size={15} className="text-white transition duration-300" />
-                      </div>
-                    </td>
-                  </tr>
-                ))}
+                          <FaPen size={15} className="text-white transition duration-300" />
+                          <FaTrash size={15} className="text-white transition duration-300" />
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
               {selectedImage && (
                 <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
@@ -231,7 +247,9 @@ export default function KYC(props: { title: string }) {
                       ×
                     </button>
                     <img
-                      src={selectedImage}
+                      src={{
+                        uri: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=2550&q=80',
+                      }}
                       alt="Selected"
                       className="max-w-full max-h-[70vh] object-contain"
                     />
@@ -256,7 +274,7 @@ export default function KYC(props: { title: string }) {
                     </label>
                     <input
                       type="text"
-                      value={selectedUser.username}
+                      value={selectedUser.bankDetails[0].username}
                       className="mb-1 text-xs font-medium text-white bg-gray-800 p-2 rounded-md outline-none border border-gray-600 dark:text-white"
                       readOnly
                     />
@@ -268,7 +286,7 @@ export default function KYC(props: { title: string }) {
                     </label>
                     <input
                       type="text"
-                      value={selectedUser.issuedAt}
+                      value={selectedUser.bankDetails[0].issuedAt}
                       className="mb-1 text-xs font-medium text-white bg-gray-800 p-2 rounded-md outline-none border border-gray-600 dark:text-white"
                       readOnly
                     />
@@ -282,7 +300,7 @@ export default function KYC(props: { title: string }) {
                     </label>
                     <input
                       type="text"
-                      value={selectedUser.waitingTime}
+                      value={selectedUser.bankDetails[0].waitingTime}
                       className="mb-1 text-xs font-medium text-white bg-gray-800 p-2 rounded-md outline-none border border-gray-600 dark:text-white"
                       readOnly
                     />
@@ -294,7 +312,7 @@ export default function KYC(props: { title: string }) {
                     </label>
                     <input
                       type="text"
-                      value={selectedUser.bankInfo.holderName}
+                      value={selectedUser.bankDetails[0].holder_name}
                       className="mb-1 text-xs font-medium text-white bg-gray-800 p-2 rounded-md outline-none border border-gray-600 dark:text-white"
                       readOnly
                     />
@@ -307,7 +325,7 @@ export default function KYC(props: { title: string }) {
                     </label>
                     <input
                       type="text"
-                      value={selectedUser.bankInfo.accountNumber}
+                      value={selectedUser.bankDetails[0].account_number}
                       className="mb-1 text-xs font-medium text-white bg-gray-800 p-2 rounded-md outline-none border border-gray-600 dark:text-white"
                       readOnly
                     />
@@ -319,7 +337,7 @@ export default function KYC(props: { title: string }) {
                     </label>
                     <input
                       type="text"
-                      value={selectedUser.bankInfo.ifscCode}
+                      value={selectedUser.bankDetails[0].ifsc_code}
                       className="mb-1 text-xs font-medium text-white bg-gray-800 p-2 rounded-md outline-none border border-gray-600 dark:text-white"
                       readOnly
                     />
@@ -333,7 +351,7 @@ export default function KYC(props: { title: string }) {
                       </label>
                       <input
                         type="text"
-                        value={selectedUser.bankInfo.bankName}
+                        value={selectedUser.bankDetails[0].bank_name}
                         className="text-xs font-medium text-white bg-gray-800 p-2 rounded-md outline-none border border-gray-600 dark:text-white"
                         readOnly
                       />
@@ -355,7 +373,7 @@ export default function KYC(props: { title: string }) {
                 <div className="flex mt-4 md:mt-6 gap-5">
                   <a
                     onClick={() => {
-                      handleOpenApproveModal();
+                      updateUserVerification(selectedUser.kycRecords[0].id, 'approved');
                     }}
                     className="cursor-pointer inline-flex items-center px-4 py-2 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
                   >
@@ -364,7 +382,7 @@ export default function KYC(props: { title: string }) {
                   <Approve isOpen={isApproveModalOpen} onClose={handleCloseApproveModal} />
                   <a
                     onClick={() => {
-                      handleOpenSuccessModal();
+                      updateUserVerification(selectedUser.kycRecords[0].id, 'rejected');
                     }}
                     className="cursor-pointer py-2 px-4 ms-2 text-sm font-medium text-white focus:outline-none bg-red-700 rounded-lg border border-red-700 hover:bg-red-800 hover:text-white focus:z-10 focus:ring-4 focus:ring-red-200 dark:focus:ring-red-900 dark:bg-red-700 dark:text-white dark:border-red-700 dark:hover:bg-red-800"
                   >

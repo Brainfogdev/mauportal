@@ -131,7 +131,7 @@ function Login() {
             onClick={signin}
             className="block w-full bg-purple-400 p-3 text-center text-gray-900 font-semibold rounded-md mt-10"
           >
-            {loading ? <span className="animate-spin">Loading...</span> : 'Sign in'}
+            {loading ? <span className="animate-spin">Signing in...</span> : 'Sign in'}
           </button>
         </form>
       </div>

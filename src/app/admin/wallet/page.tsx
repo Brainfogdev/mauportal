@@ -41,7 +41,7 @@ export default function Wallet(props: { title: string }) {
       amountDebited: '0',
       amountCredited: '11,47,450.00',
       closingBalance: '1,30,58,937.75',
-      referenceNo: 'NUQI00000001',
+      referenceNo: 'NUQI00000005',
       status: 'Approved',
     },
     {
@@ -60,7 +60,7 @@ export default function Wallet(props: { title: string }) {
       amountDebited: '-24,702.91',
       amountCredited: '0',
       closingBalance: '3,07,396.75',
-      referenceNo: 'NUQI00000001',
+      referenceNo: 'NUQI00000005',
       status: 'Approved',
     },
   ];
@@ -103,13 +103,14 @@ export default function Wallet(props: { title: string }) {
   const handleOpenSuccessModal = () => setSuccessModalOpen(true);
   const handleCloseSuccessModal = () => setSuccessModalOpen(false);
 
-  return ( 
+  return (
     <NextUIProvider>
       <div className="flex h-full">
         <div className="w-full rounded-3xl bg-gray-800 p-6 lg:w-8/12">
           <div className="mb-8 flex items-center justify-between text-white">
             <p className="text-2xl font-bold">Approve Wallet Transactions</p>
             <button
+              onClick={() => window.location.reload()}
               type="button"
               className="text-white bg-[#1da1f2] hover:bg-[#1da1f2]/90 focus:ring-4 focus:outline-none focus:ring-[#1da1f2]/50 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:focus:ring-[#1da1f2]/55 me-2 mb-2"
             >
