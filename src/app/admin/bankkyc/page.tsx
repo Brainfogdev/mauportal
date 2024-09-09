@@ -1,3 +1,4 @@
+'use client'
 import { NextUIProvider, useDisclosure } from '@nextui-org/react';
 import { useState, useRef, useEffect } from 'react';
 import axios from 'axios';
