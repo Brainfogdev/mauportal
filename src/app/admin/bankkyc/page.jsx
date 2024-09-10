@@ -68,7 +68,7 @@ const KYC = () => {
     setSelectedImage(null);
   };
 
-  function updateUserVerification(id, status) {
+ async function updateUserVerification(id, status) {
     const config = {
       method: 'put',
       url: `http://150.129.118.10:8080/user/kyc/${id}/review`,
@@ -77,7 +77,7 @@ const KYC = () => {
       },
     };
 
-    axios(config)
+    await axios(config)
       .then(function (response) {
         console.log(JSON.stringify(response.data));
         alert('user kyc updated');
@@ -87,14 +87,14 @@ const KYC = () => {
       });
   }
 
-  function allBankKyc() {
+ async function allBankKyc() {
     setLoading(true);
     const config = {
       method: 'get',
       url: 'http://150.129.118.10:8080/user/bankkyc/all',
     };
 
-    axios(config)
+   await axios(config)
       .then(function (response) {
         console.log(JSON.stringify(response.data));
         setData(response.data);

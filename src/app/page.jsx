@@ -50,7 +50,7 @@ function Login() {
     }
   };
 
-  function signin() {
+  async function signin() {
     setLoading(true);
     const data = {
       username: username,
@@ -67,7 +67,7 @@ function Login() {
       data: data,
     };
 
-    axios
+    await axios
       .request(config)
       .then((response) => {
         console.log(JSON.stringify(response.data));
@@ -75,7 +75,7 @@ function Login() {
       })
       .catch((error) => {
         console.log(error);
-        alert("username or password is wrong.")
+        alert('username or password is wrong.');
       })
       .finally(() => {
         setLoading(false);
