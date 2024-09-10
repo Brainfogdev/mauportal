@@ -3,10 +3,10 @@ const nextConfig = {
   async rewrites() {
     return [
       {
-        source: '/*',
-        destination: 'http://150.129.118.10:5000/*',
-      },
-    ];
+        source: '/:path*',
+        destination: 'http://150.129.118.10:5000/:path*'
+      }
+    ]
   },
   webpack: (config) => {
     config.module.rules.push({
