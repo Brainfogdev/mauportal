@@ -7,7 +7,7 @@ function Approve({ isOpen, onClose }) {
 
   if (!isOpen && !successfulModal) return null;
 
-  const addFunds = async (referenceNo: any, amountCredited: any) => {
+  const addFunds = async (referenceNo, amountCredited) => {
     const data = { userId: referenceNo, amount: amountCredited };
 
     const config = {

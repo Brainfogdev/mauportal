@@ -4,7 +4,7 @@ import axios from 'axios';
 function Approve({ isOpen, onClose }) {
   if (!isOpen) return null;
  
-  const addFunds = async (referenceNo: any, amountCredited: any) => {
+  const addFunds = async (referenceNo, amountCredited) => {
     const data = { userId: 'NUQI00000001', amount: 1000 };
 
     const config = {

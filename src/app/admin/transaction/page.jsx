@@ -9,20 +9,14 @@ import {
   ModalFooter,
   Button,
   useDisclosure,
-  user,
 } from '@nextui-org/react';
 import { useState, useRef } from 'react';
-import axios from 'axios';
-import Logoutmodal from '@/components/logout/logoutmodal';
-import { FaCheckCircle } from 'react-icons/fa';
-import Approve from '@/components/approvalmodal/approve';
-import Success from '@/components/successmodal/success';
 
-export default function Wallet(props: { title: string }) {
-  const { title } = props;
+
+export default function Transaction({ title }) {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
-  const [csv, setCsv] = useState(null);
   const [selectedUser, setSelectedUser] = useState(null);
+  const [sortOrder, setSortOrder] = useState('asc');
 
   const data = [
     {
@@ -41,14 +35,13 @@ export default function Wallet(props: { title: string }) {
       amountDebited: '0',
       amountCredited: '11,47,450.00',
       closingBalance: '1,30,58,937.75',
-      referenceNo: 'NUQI00000005',
-      status: 'Approved',
+      referenceNo: 'NUQI00000001',
     },
     {
       id: 2,
       periodFrom: '23-07-2024',
       periodTo: '23-07-2024',
-      accountNumber: 'CASHACCOUNT123',
+      accountNumber: 'CASHACCOUNT124',
       currency: 'USD',
       portfolio: 'PORTFOLIOID_123-1',
       portfolioName: 'PORTFOLIO AAA',
@@ -60,10 +53,10 @@ export default function Wallet(props: { title: string }) {
       amountDebited: '-24,702.91',
       amountCredited: '0',
       closingBalance: '3,07,396.75',
-      referenceNo: 'NUQI00000005',
-      status: 'Approved',
+      referenceNo: 'NUQI00000002',
     },
   ];
+  const [filteredData, setFilteredData] = useState(data);
 
   const uploadCSVRef = useRef(null);
   const onOpenModal = (user) => {
@@ -71,20 +64,11 @@ export default function Wallet(props: { title: string }) {
     onOpenChange(true);
   };
 
-  const [filteredData, setFilteredData] = useState(data);
-  const [sortOrder, setSortOrder] = useState('asc');
-
-  const handleFilterChange = (e) => {
-    const filterValue = e.target.value.toLowerCase();
-    const filteredUsers = data.filter((user) => user.name.toLowerCase().includes(filterValue));
-    setFilteredData(filteredUsers);
-  };
-
-  const handleViewUser = (user: any) => {
+  const handleViewUser = (user) => {
     setSelectedUser(user);
   };
 
-  const handleSort = (column: any) => {
+  const handleSort = (column) => {
     const sortedData = [...filteredData].sort((a, b) => {
       if (a[column] < b[column]) return sortOrder === 'asc' ? -1 : 1;
       if (a[column] > b[column]) return sortOrder === 'asc' ? 1 : -1;
@@ -94,39 +78,42 @@ export default function Wallet(props: { title: string }) {
     setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
   };
 
-  const [isApproveModalOpen, setApproveModalOpen] = useState(false);
-  const [isSuccessModalOpen, setSuccessModalOpen] = useState(false);
-
-  const handleOpenApproveModal = () => setApproveModalOpen(true);
-  const handleCloseApproveModal = () => setApproveModalOpen(false);
-
-  const handleOpenSuccessModal = () => setSuccessModalOpen(true);
-  const handleCloseSuccessModal = () => setSuccessModalOpen(false);
-
   return (
     <NextUIProvider>
       <div className="flex h-full">
         <div className="w-full rounded-3xl bg-gray-800 p-6 lg:w-8/12">
           <div className="mb-8 flex items-center justify-between text-white">
-            <p className="text-2xl font-bold">Approve Wallet Transactions</p>
+            <p className="text-2xl font-bold">Get Bank Transactions </p>
             <button
-              onClick={() => window.location.reload()}
               type="button"
-              className="text-white bg-[#1da1f2] hover:bg-[#1da1f2]/90 focus:ring-4 focus:outline-none focus:ring-[#1da1f2]/50 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:focus:ring-[#1da1f2]/55 me-2 mb-2"
+              onClick={() => {
+                uploadCSVRef.current.click();
+              }}
+              className="text-white bg-[#1da1f2] hover:bg-[#1da1f2]/90 focus:ring-4 focus:outline-none focus:ring-[#1da1f2]/50 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:focus:ring-[#1da1f2]/55 me-2 mb-2 ml-auto"
             >
-              Refresh
+              GET
             </button>
-            {/* <input ref={uploadCSVRef} className="hidden" type="file" accept=".json, .xls, .xlsx, .csv" /> */}
+            <input ref={uploadCSVRef} className="hidden" type="file" accept=".json, .xls, .xlsx" />
           </div>
-          <div className="flex flex-wrap items-center justify-between pb-8"></div>
-
           <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
             <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-800">
               <thead className="text-xs text-gray-700 uppercase bg-gray-200 dark:bg-gray-700 dark:text-gray-400">
                 <tr>
+                  {/* <th scope="col" className="p-4 bg-gray-800">
+                  <div className="flex items-center">
+                    <input
+                      id="checkbox-all-search"
+                      type="checkbox"
+                      className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                    />
+                    <label htmlFor="checkbox-all-search" className="sr-only">
+                      checkbox
+                    </label>
+                  </div>
+                </th> */}
                   <th
                     scope="col"
-                    className="px-6 py-3 bg-gray-800 text-white text-center cursor-pointerback"
+                    className="px-6 py-3 bg-gray-800 text-white text-center cursor-pointer"
                     onClick={() => handleSort('accountNumber')}
                   >
                     Account No.
@@ -138,6 +125,14 @@ export default function Wallet(props: { title: string }) {
                     onClick={() => handleSort('transactionDate')}
                   >
                     Trans. Date
+                    <span className="ml-2">{sortOrder === 'asc' ? '↑' : '↓'}</span>
+                  </th>
+                  <th
+                    scope="col"
+                    className="px-6 py-3 bg-gray-800 text-white text-center cursor-pointer"
+                    onClick={() => handleSort('description')}
+                  >
+                    Description
                     <span className="ml-2">{sortOrder === 'asc' ? '↑' : '↓'}</span>
                   </th>
 
@@ -158,15 +153,6 @@ export default function Wallet(props: { title: string }) {
                     <span className="ml-2">{sortOrder === 'asc' ? '↑' : '↓'}</span>
                   </th>
 
-                  <th
-                    scope="col"
-                    className="px-6 py-3 bg-gray-800 text-white text-center cursor-pointer  whitespace-nowrap"
-                    onClick={() => handleSort('status')}
-                  >
-                    Status
-                    <span className="ml-2">{sortOrder === 'asc' ? '↑' : '↓'}</span>
-                  </th>
-
                   <th scope="col" className="px-6 py-3 bg-gray-800 text-white text-center">
                     Action
                   </th>
@@ -178,6 +164,18 @@ export default function Wallet(props: { title: string }) {
                     key={user.id}
                     className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
                   >
+                    {/* <td className="w-4 p-4 bg-gray-800">
+                    <div className="flex items-center">
+                      <input
+                        id={`checkbox-table-search-${user.id}`}
+                        type="checkbox"
+                        className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                      />
+                      <label htmlFor={`checkbox-table-search-${user.id}`} className="sr-only">
+                        checkbox
+                      </label>
+                    </div>
+                  </td> */}
                     <th
                       scope="row"
                       className="bg-gray-800 flex items-center px-6 py-4 text-gray-900 whitespace-nowrap dark:text-white"
@@ -186,10 +184,13 @@ export default function Wallet(props: { title: string }) {
                         {user.accountNumber}
                       </td>
                     </th>
+
                     <td className="px-6 py-4 bg-gray-800 text-center text-xs">
                       {user.transactionDate}
                     </td>
-                    {/* <td className="px-6 py-4 bg-gray-800 text-center whitespace-nowrap">{user.description}</td> */}
+                    <td className="px-6 py-4 bg-gray-800 text-center whitespace-nowrap">
+                      {user.description}
+                    </td>
 
                     <td className="px-6 py-4 bg-gray-800 text-center text-xs">
                       {user.referenceNo}
@@ -197,11 +198,7 @@ export default function Wallet(props: { title: string }) {
                     <td className="px-6 py-4 bg-gray-800 text-center text-xs">
                       {user.amountDebited}
                     </td>
-                    <td className="px-6 py-4 bg-gray-800 text-center text-white text-xs">
-                      {' '}
-                      <FaCheckCircle size={25} color="#99F7AB" />
-                    </td>
-
+                    {/* <td className="px-6 py-4 bg-gray-800 text-center">{user.amountCredited}</td> */}
                     <td className="px-6 py-4 bg-gray-800">
                       <button
                         className="border border-slate-500 text-white px-4 py-2 rounded hover:bg-blue-500 hover:text-white transition duration-300"
@@ -236,7 +233,7 @@ export default function Wallet(props: { title: string }) {
         <div className=" flex flex-1 mt-8  grow lg:mt-0 lg:w-4/12 lg:pl-4">
           <div className="rounded-3xl bg-gray-800 px-6 pt-6 w-96">
             <div className="pb-6 text-2xl font-bold text-white">
-              <p>Wallet Transactions</p>
+              <p>Get Bank Transaction Details</p>
             </div>
 
             {selectedUser && (
@@ -455,23 +452,17 @@ export default function Wallet(props: { title: string }) {
                 </div>
                 <div className="flex mt-4 md:mt-6 gap-5">
                   <a
-                    onClick={() => {
-                      handleOpenApproveModal();
-                    }}
-                    className="cursor-pointer inline-flex items-center px-4 py-2 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                    href="#"
+                    className="inline-flex items-center px-4 py-2 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
                   >
                     Approved
                   </a>
-                  <Approve isOpen={isApproveModalOpen} onClose={handleCloseApproveModal} />
                   <a
-                    onClick={() => {
-                      handleOpenSuccessModal();
-                    }}
-                    className="cursor-pointer py-2 px-4 ms-2 text-sm font-medium text-white focus:outline-none bg-red-700 rounded-lg border border-red-700 hover:bg-red-800 hover:text-white focus:z-10 focus:ring-4 focus:ring-red-200 dark:focus:ring-red-900 dark:bg-red-700 dark:text-white dark:border-red-700 dark:hover:bg-red-800"
+                    href="#"
+                    className="py-2 px-4 ms-2 text-sm font-medium text-white focus:outline-none bg-red-700 rounded-lg border border-red-700 hover:bg-red-800 hover:text-white focus:z-10 focus:ring-4 focus:ring-red-200 dark:focus:ring-red-900 dark:bg-red-700 dark:text-white dark:border-red-700 dark:hover:bg-red-800"
                   >
                     Disapproved
                   </a>
-                  <Success isOpen={isSuccessModalOpen} onClose={handleCloseSuccessModal} />
                 </div>
               </div>
             )}

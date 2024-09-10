@@ -15,8 +15,7 @@ import {
 
 import { useState, useRef } from 'react';
 
-export function Content(props: { title: string }) {
-  const { title } = props;
+export function Content({ title }) {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const [csv, setCsv] = useState(null);
   const [selectedUser, setSelectedUser] = useState(null);
