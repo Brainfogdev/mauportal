@@ -2,18 +2,11 @@
 
 import {
   NextUIProvider,
-  Modal,
-  ModalContent,
-  ModalHeader,
-  ModalBody,
-  ModalFooter,
-  Button,
   useDisclosure,
 } from '@nextui-org/react';
 import { useState, useRef } from 'react';
 
-
-export default function Transaction({ title }) {
+export default function Transaction() {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const [selectedUser, setSelectedUser] = useState(null);
   const [sortOrder, setSortOrder] = useState('asc');

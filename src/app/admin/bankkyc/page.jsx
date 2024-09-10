@@ -2,12 +2,6 @@
 
 import {
   NextUIProvider,
-  Modal,
-  ModalContent,
-  ModalHeader,
-  ModalBody,
-  ModalFooter,
-  Button,
   useDisclosure,
   user,
 } from '@nextui-org/react';

@@ -5,9 +5,7 @@ import {
   Modal,
   ModalContent,
   ModalHeader,
-  ModalBody,
-  ModalFooter,
-  Button,   
+  ModalBody, 
   useDisclosure,
 } from '@nextui-org/react';
 import { useState, useRef } from 'react';

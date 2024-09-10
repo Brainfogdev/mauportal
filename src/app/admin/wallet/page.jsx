@@ -2,23 +2,14 @@
 
 import {
   NextUIProvider,
-  Modal,
-  ModalContent,
-  ModalHeader,
-  ModalBody,
-  ModalFooter,
-  Button,
   useDisclosure,
-  user,
 } from '@nextui-org/react';
 import { useState, useRef } from 'react';
-import axios from 'axios';
-import Logoutmodal from '@/components/logout/logoutmodal';
 import { FaCheckCircle } from 'react-icons/fa';
 import Approve from '@/components/approvalmodal/approve';
 import Success from '@/components/successmodal/success';
 
-export default function Wallet( { title }) {
+export default function Wallet() {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const [csv, setCsv] = useState(null);
   const [selectedUser, setSelectedUser] = useState(null);

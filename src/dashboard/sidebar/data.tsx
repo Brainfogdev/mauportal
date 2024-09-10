@@ -1,10 +1,8 @@
-import { DocIcon } from './icons/DocIcon';
+
 import { HomeIcon } from './icons/HomeIcon';
 import { StatusIcon } from './icons/StatusIcon';
 import { CreditIcon } from './icons/CreditIcon';
 import { TransactionIcon } from './icons/TransactionIcon';
-import { SettingsIcon } from './icons/SettingsIcon';
-import { title } from 'process';
 import KycIcon from './icons/KycIcon';
 
 export const data = [

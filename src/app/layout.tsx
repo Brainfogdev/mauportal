@@ -1,7 +1,6 @@
 import 'tailwindcss/tailwind.css';
 import React from 'react';
 import type { Metadata } from 'next';
-import { DashboardLayout } from '@/dashboard/Layout';
 
 export const metadata: Metadata = {
   title: 'NuqiGold Portal',

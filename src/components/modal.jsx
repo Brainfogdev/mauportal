@@ -1,5 +1,5 @@
 // Modal.tsx
-import React, { ReactNode } from 'react';
+import React from 'react';
 
 const Modal = ({ isOpen, onClose, children }) => {
   if (!isOpen) return null;

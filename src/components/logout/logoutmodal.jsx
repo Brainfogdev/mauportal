@@ -2,8 +2,9 @@ import React from 'react';
 import { useRouter } from 'next/navigation';
 
 const Modal = ({ isOpen, onClose }) => {
-  if (!isOpen) return null;
   const router = useRouter();
+  if (!isOpen) return null;
+  
 
   return (
     <div className="fixed inset-0 flex items-center justify-center z-50">

@@ -53,8 +53,8 @@ function Login() {
   function signin() {
     setLoading(true);
     const data = {
-      username: 'suyashtambe7',
-      password: 'suyash@12',
+      username: username,
+      password: password,
     };
 
     let config = {
@@ -75,6 +75,7 @@ function Login() {
       })
       .catch((error) => {
         console.log(error);
+        alert("username or password is wrong.")
       })
       .finally(() => {
         setLoading(false);
