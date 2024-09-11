@@ -1,0 +1,31 @@
+{
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "http://150.129.118.10:5000/"
+    }
+  ],
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "X-Forwarded-Proto",
+          "value": "http"
+        }
+      ]
+    }
+  ],
+  "redirect": [
+    {
+      "source": [
+        {
+          "source": "/api/(.*)",
+          "destination": "/api/:$1",
+          "permanent": false
+        }
+      ]
+    }
+  ],
+  "version": 2
+}
