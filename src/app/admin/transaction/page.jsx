@@ -1,10 +1,7 @@
 'use client';
 
-import {
-  NextUIProvider,
-  useDisclosure,
-} from '@nextui-org/react';
-import { useState, useRef } from 'react';
+import { NextUIProvider, useDisclosure } from '@nextui-org/react';
+import { useState, useRef, useEffect } from 'react';
 
 export default function Transaction() {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
@@ -70,6 +67,8 @@ export default function Transaction() {
     setFilteredData(sortedData);
     setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
   };
+
+  useEffect(() => {}, []);
 
   return (
     <NextUIProvider>

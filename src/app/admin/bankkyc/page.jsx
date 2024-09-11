@@ -1,10 +1,6 @@
 'use client';
 
-import {
-  NextUIProvider,
-  useDisclosure,
-  user,
-} from '@nextui-org/react';
+import { NextUIProvider, useDisclosure, user } from '@nextui-org/react';
 import React, { useState, useRef, useEffect } from 'react';
 import { FaEye } from 'react-icons/fa';
 import { FaPen } from 'react-icons/fa';
@@ -68,7 +64,7 @@ const KYC = () => {
     setSelectedImage(null);
   };
 
- async function updateUserVerification(id, status) {
+  async function updateUserVerification(id, status) {
     const config = {
       method: 'put',
       url: `http://150.129.118.10:8080/user/kyc/${id}/review`,
@@ -87,14 +83,14 @@ const KYC = () => {
       });
   }
 
- async function allBankKyc() {
+  async function allBankKyc() {
     setLoading(true);
     const config = {
       method: 'get',
       url: 'http://150.129.118.10:8080/user/bankkyc/all',
     };
 
-   await axios(config)
+    await axios(config)
       .then(function (response) {
         console.log(JSON.stringify(response.data));
         setData(response.data);

@@ -1,20 +1,18 @@
 'use client';
 
-import {
-  NextUIProvider,
-  useDisclosure,
-} from '@nextui-org/react';
-import { useState, useRef } from 'react';
+import { NextUIProvider, useDisclosure } from '@nextui-org/react';
+import { useState, useRef, useEffect } from 'react';
 import { FaCheckCircle } from 'react-icons/fa';
+import { CiWarning } from 'react-icons/ci';
 import Approve from '@/components/approvalmodal/approve';
 import Success from '@/components/successmodal/success';
+import axios from 'axios';
 
 export default function Wallet() {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const [csv, setCsv] = useState(null);
   const [selectedUser, setSelectedUser] = useState(null);
-
-  const data = [
+  const [data, setData] = useState([
     {
       id: 1,
       periodFrom: '23-07-2024',
@@ -31,8 +29,7 @@ export default function Wallet() {
       amountDebited: '0',
       amountCredited: '11,47,450.00',
       closingBalance: '1,30,58,937.75',
-      referenceNo: 'NUQI00000005',
-      status: 'Approved',
+      referenceNo: 'NUQI00000001',
     },
     {
       id: 2,
@@ -50,10 +47,10 @@ export default function Wallet() {
       amountDebited: '-24,702.91',
       amountCredited: '0',
       closingBalance: '3,07,396.75',
-      referenceNo: 'NUQI00000005',
-      status: 'Approved',
+      referenceNo: 'NUQI00000001',
     },
-  ];
+  ]);
+  const [loading, setLoading] = useState(false);
 
   const uploadCSVRef = useRef(null);
   const onOpenModal = (user) => {
@@ -92,6 +89,51 @@ export default function Wallet() {
 
   const handleOpenSuccessModal = () => setSuccessModalOpen(true);
   const handleCloseSuccessModal = () => setSuccessModalOpen(false);
+
+  async function updateUserWallet(id, amount) {
+    const config = {
+      method: 'put',
+      url: `http://150.129.118.10:8080/user/wallet/mau`,
+      data: {
+        userId: id,
+        amount: amount,
+      },
+    };
+
+    await axios(config)
+      .then(function (response) {
+        console.log(JSON.stringify(response.data));
+        alert('user kyc updated');
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+  }
+
+  async function getAllWalletRequest() {
+    setLoading(true);
+    const config = {
+      method: 'get',
+      url: 'http://150.129.118.10:5000/admin/eod-transactions',
+    };
+
+    await axios(config)
+      .then(function (response) {
+        console.log(JSON.stringify(response.data));
+        setData(response.data);
+        setFilteredData(response.data);
+      })
+      .catch(function (error) {
+        console.log(error);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  }
+
+  useEffect(() => {
+    getAllWalletRequest();
+  }, []);
 
   return (
     <NextUIProvider>
@@ -144,7 +186,7 @@ export default function Wallet() {
                     className="px-6 py-3 bg-gray-800 text-white text-center cursor-pointer  whitespace-nowrap"
                     onClick={() => handleSort('amountDebited')}
                   >
-                    Amount Debited
+                    Amount Credited
                     <span className="ml-2">{sortOrder === 'asc' ? '↑' : '↓'}</span>
                   </th>
 
@@ -185,11 +227,12 @@ export default function Wallet() {
                       {user.referenceNo}
                     </td>
                     <td className="px-6 py-4 bg-gray-800 text-center text-xs">
-                      {user.amountDebited}
+                      {user.amountCredited}
                     </td>
                     <td className="px-6 py-4 bg-gray-800 text-center text-white text-xs">
                       {' '}
-                      <FaCheckCircle size={25} color="#99F7AB" />
+                      {user.status === 'approved' && <FaCheckCircle size={25} color="#99F7AB" />}
+                      {user.status === 'pending' && <CiWarning size={25} color="yellow" />}
                     </td>
 
                     <td className="px-6 py-4 bg-gray-800">
@@ -452,7 +495,11 @@ export default function Wallet() {
                   >
                     Approved
                   </a>
-                  <Approve isOpen={isApproveModalOpen} onClose={handleCloseApproveModal} />
+                  <Approve
+                    data={selectedUser}
+                    isOpen={isApproveModalOpen}
+                    onClose={handleCloseApproveModal}
+                  />
                   <a
                     onClick={() => {
                       handleOpenSuccessModal();

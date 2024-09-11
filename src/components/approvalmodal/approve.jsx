@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 
-function Approve({ isOpen, onClose }) {
+function Approve({ isOpen, onClose, data }) {
   const [successfulModal, setSuccessfulModal] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
 
@@ -12,7 +12,7 @@ function Approve({ isOpen, onClose }) {
 
     const config = {
       method: 'put',
-      url: 'http://150.129.118.10:8080/user/wallet/mau',
+      url: 'http://150.129.118.10:8080/user/wallet/mou',
       headers: {
         'Content-Type': 'application/json',
       },
@@ -71,7 +71,7 @@ function Approve({ isOpen, onClose }) {
                 No, cancel
               </button>
               <button
-                onClick={() => addFunds('NUQI00000001', 1000)}
+                onClick={() => addFunds(data.referenceNo, data.amountCredited)}
                 className={`py-2.5 px-5 ms-3 text-sm font-medium text-white ${
                   isProcessing ? 'bg-gray-400 cursor-not-allowed' : 'bg-red-600 hover:bg-red-800'
                 } focus:ring-4 focus:outline-none focus:ring-red-300 dark:focus:ring-red-800 rounded-lg`}
